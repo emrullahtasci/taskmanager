@@ -1,13 +1,14 @@
 package com.example.taskmanager.service;
 
-import org.example.taskmanager.dto.TaskRequest;
-import org.example.taskmanager.entity.Task;
-import org.example.taskmanager.repository.TaskRepository;
+import com.example.taskmanager.dto.TaskRequest;
+import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.repository.TaskRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 @Transactional(readOnly = true)

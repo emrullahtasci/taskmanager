@@ -1,9 +1,9 @@
 package com.example.taskmanager.controller;
 
 import jakarta.validation.Valid;
-import org.example.taskmanager.dto.TaskRequest;
-import org.example.taskmanager.entity.Task;
-import org.example.taskmanager.service.TaskService;
+import com.example.taskmanager.dto.TaskRequest;
+import com.example.taskmanager.entity.Task;
+import com.example.taskmanager.service.TaskService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

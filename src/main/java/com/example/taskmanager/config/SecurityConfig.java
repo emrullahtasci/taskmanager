@@ -2,18 +2,10 @@ package com.example.taskmanager.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -22,56 +14,21 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        return http
+        http
+                // Postman ile rahatça POST/PUT istekleri atabilmek için CSRF'i kapatıyoruz
                 .csrf(AbstractHttpConfigurer::disable)
 
-                .headers(headers -> headers
-                        .frameOptions(frameOptions -> frameOptions.sameOrigin())
-                )
-
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
-
+                // İstek yönlendirme kuralları
                 .authorizeHttpRequests(auth -> auth
-
-                        .requestMatchers("/h2-console/**").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/tasks/**").hasAnyRole("USER", "ADMIN")
-
-                        .requestMatchers(HttpMethod.POST, "/tasks/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PUT, "/tasks/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.DELETE, "/tasks/**").hasRole("ADMIN")
-
+                        // /tasks ve /h2-console ile başlayan her şeye ŞİFRESİZ erişim izni ver
+                        .requestMatchers("/tasks/**", "/h2-console/**").permitAll()
+                        // Geri kalan herhangi bir istek olursa (güvenlik protokolü gereği) logın istesin
                         .anyRequest().authenticated()
                 )
 
-                .httpBasic(Customizer.withDefaults())
+                // H2 veritabanı arayüzünün tarayıcıda bloklanmadan açılması için bu ayar şart
+                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
 
-                .build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder) {
-
-        UserDetails user = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode("1234"))
-                .roles("USER")
-                .build();
-
-        UserDetails admin = User.builder()
-                .username("admin")
-                .password(passwordEncoder.encode("admin123"))
-                .roles("ADMIN")
-                .build();
-
-        return new InMemoryUserDetailsManager(user, admin);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return http.build();
     }
 }

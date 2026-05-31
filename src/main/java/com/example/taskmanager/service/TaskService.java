@@ -1,0 +1,123 @@
+package com.example.taskmanager.service;
+
+import org.example.taskmanager.dto.TaskRequest;
+import org.example.taskmanager.entity.Task;
+import org.example.taskmanager.repository.TaskRepository;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+@Transactional(readOnly = true)
+public class TaskService {
+
+    private final TaskRepository taskRepository;
+
+    public TaskService(TaskRepository taskRepository) {
+        this.taskRepository = taskRepository;
+    }
+
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
+    }
+
+    public Optional<Task> getTaskById(Long id) {
+        return taskRepository.findById(id);
+    }
+
+    @Transactional
+    public Task createTask(TaskRequest taskRequest) {
+        Task task = new Task();
+
+        task.setTitle(taskRequest.getTitle());
+        task.setDescription(taskRequest.getDescription());
+
+        if (taskRequest.getCompleted() != null) {
+            task.setCompleted(taskRequest.getCompleted());
+        } else {
+            task.setCompleted(false);
+        }
+
+        return taskRepository.save(task);
+    }
+
+    @Transactional
+    public Task updateTask(Long id, TaskRequest taskRequest) {
+        Optional<Task> optionalTask = taskRepository.findById(id);
+
+        if (optionalTask.isPresent()) {
+            Task existingTask = optionalTask.get();
+
+            existingTask.setTitle(taskRequest.getTitle());
+            existingTask.setDescription(taskRequest.getDescription());
+
+            if (taskRequest.getCompleted() != null) {
+                existingTask.setCompleted(taskRequest.getCompleted());
+            }
+
+            return taskRepository.save(existingTask);
+        }
+
+        return null;
+    }
+
+    @Transactional
+    public boolean deleteTask(Long id) {
+        Optional<Task> optionalTask = taskRepository.findById(id);
+
+        if (optionalTask.isPresent()) {
+            taskRepository.deleteById(id);
+            return true;
+        }
+
+        return false;
+    }
+
+    public List<Task> getTasksByCompletedStatus(boolean completed) {
+        return taskRepository.findByCompleted(completed);
+    }
+
+    public List<Task> searchTasksByTitle(String title) {
+        return taskRepository.findByTitleContainingIgnoreCase(title);
+    }
+
+    public List<Task> filterTasksByTitleAndCompleted(String title, boolean completed) {
+        return taskRepository.findByTitleContainingIgnoreCaseAndCompleted(title, completed);
+    }
+
+    public long countTasksByCompletedStatus(boolean completed) {
+        return taskRepository.countByCompleted(completed);
+    }
+
+    public boolean existsTaskByTitle(String title) {
+        return taskRepository.existsByTitleIgnoreCase(title);
+    }
+
+    public List<Task> getLatestFiveTasks() {
+        return taskRepository.findTop5ByOrderByIdDesc();
+    }
+
+    @Transactional
+    public Task createTaskWithRollbackTest(TaskRequest taskRequest) {
+        Task task = new Task();
+
+        task.setTitle(taskRequest.getTitle());
+        task.setDescription(taskRequest.getDescription());
+
+        if (taskRequest.getCompleted() != null) {
+            task.setCompleted(taskRequest.getCompleted());
+        } else {
+            task.setCompleted(false);
+        }
+
+        Task savedTask = taskRepository.save(task);
+
+        if (true) {
+            throw new RuntimeException("Rollback testi için bilinçli hata oluşturuldu.");
+        }
+
+        return savedTask;
+    }
+}

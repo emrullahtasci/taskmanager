@@ -2,33 +2,48 @@ package com.example.taskmanager.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // Postman ile rahatça POST/PUT istekleri atabilmek için CSRF'i kapatıyoruz
-                .csrf(AbstractHttpConfigurer::disable)
-
-                // İstek yönlendirme kuralları
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // /tasks ve /h2-console ile başlayan her şeye ŞİFRESİZ erişim izni ver
-                        .requestMatchers("/tasks/**", "/h2-console/**").permitAll()
-                        // Geri kalan herhangi bir istek olursa (güvenlik protokolü gereği) logın istesin
+                        .requestMatchers("/h2-console/**", "/").permitAll()
                         .anyRequest().authenticated()
                 )
-
-                // H2 veritabanı arayüzünün tarayıcıda bloklanmadan açılması için bu ayar şart
-                .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable));
-
+                .headers(headers -> headers.frameOptions(frame -> frame.disable()))
+                .httpBasic(Customizer.withDefaults());
         return http.build();
+    }
+
+    @Bean
+    public UserDetailsService userDetailsService() {
+        UserDetails user = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("password")
+                .roles("USER")
+                .build();
+
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("admin123")
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(user, admin);
     }
 }

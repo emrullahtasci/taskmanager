@@ -5,111 +5,541 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Taşcı Hediyelik ve Mutluluk | Butik Tasarım & Hediye</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* SAYFA VE MENÜ STİLLERİ */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Üst Menüyü Sabitliyoruz ve Elemanları İki Uca Yaslıyoruz */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between; /* Sol logo, sağ menü ve sepet */
+            align-items: center;
+            padding: 0 40px;
+            box-sizing: border-box;
+            z-index: 999;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1d1d1f;
+        }
+
+        /* Menü Linkleri ve Sepeti Sağa Toplayan Alan */
+        .nav-right-container {
+            display: flex;
+            align-items: center;
+            gap: 25px; /* Elemanlar arası boşluk */
+        }
+
+        .nav-right-container a {
+            text-decoration: none;
+            color: #1d1d1f;
+            font-weight: 500;
+            font-size: 15px;
+            transition: color 0.2s;
+        }
+
+        .nav-right-container a:hover {
+            color: #0071e3;
+        }
+
+        /* EN SAĞ ÜSTTEKİ SEPET BUTONU STİLİ */
+        .cart-nav-btn {
+            background: #1d1d1f;
+            color: #fff;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+        .cart-nav-btn:hover {
+            background: #424245;
+            transform: scale(1.05);
+        }
+        .cart-count-badge {
+            background: #ff3b30;
+            color: #fff;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Hero ve İçeriklerin Üst Menünün Altında Kalmaması İçin Boşluk Ayarı */
+        .hero {
+            margin-top: 70px;
+        }
+
+        /* Filtre Butonları Tasarımı */
+        .filter-container {
+            text-align: center;
+            margin: 20px auto 40px auto;
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            max-width: 800px;
+        }
+        .filter-btn {
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            border: 1px solid #d2d2d7;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .filter-btn:hover {
+            background-color: #e8e8ed;
+            transform: translateY(-2px);
+        }
+        .filter-btn.active {
+            background-color: #1d1d1f;
+            color: #ffffff;
+            border-color: #1d1d1f;
+        }
+        #koleksiyon-alani {
+            scroll-margin-top: 100px;
+            margin-top: 40px;
+        }
+
+        /* SAĞDAN KAYARAK AÇILAN SEPET PANELİ (DRAWER) */
+        .cart-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 380px;
+            height: 100%;
+            background: #fff;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .cart-drawer.open {
+            right: 0;
+        }
+        .cart-header {
+            padding: 20px;
+            border-bottom: 1px solid #e5e5ea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f5f5f7;
+        }
+        .cart-header h3 {
+            margin: 0;
+            font-size: 18px;
+        }
+        .close-cart {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #8e8e93;
+        }
+        .cart-items-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #f2f2f7;
+            padding-bottom: 15px;
+            align-items: center;
+        }
+        .cart-item img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .cart-item-details {
+            flex: 1;
+        }
+        .cart-item-details h4 {
+            margin: 0 0 5px 0;
+            font-size: 14px;
+        }
+        .cart-item-price {
+            color: #1d1d1f;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 5px;
+        }
+        .quantity-controls button {
+            background: #e5e5ea;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .remove-item {
+            background: none;
+            border: none;
+            color: #ff3b30;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Tüm Fiyatların Özet Alanı */
+        .cart-footer {
+            padding: 20px;
+            border-top: 1px solid #e5e5ea;
+            background: #f5f5f7;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #1d1d1f;
+        }
+        .summary-row.total {
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 1px solid #d2d2d7;
+            padding-top: 10px;
+            margin-top: 10px;
+            color: #000;
+        }
+        .checkout-btn {
+            width: 100%;
+            background: #0071e3;
+            color: #fff;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        .checkout-btn:hover {
+            background: #0077ed;
+        }
+
+        /* Sepete Ekle Butonu */
+        .add-to-cart-btn {
+            width: 100%;
+            background-color: #1d1d1f;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .add-to-cart-btn:hover {
+            background-color: #424245;
+        }
+    </style>
 </head>
 <body>
 
 <header>
     <div class="logo">Taşcı Hediyelik ve Mutluluk</div>
-    <nav>
-        <a href="#">Anasayfa</a>
-        <a href="#">Koleksiyonlar</a>
-        <a href="#">Ürün Sayısı: <span id="product-count">0</span></a>
-    </nav>
-    <div class="auth-status">
-        <span class="badge">Güvenli Bağlantı (RBAC Active)</span>
+
+    <div class="nav-right-container">
+        <a href="#sayfa-ustu" id="nav-home">Ana Sayfa</a>
+        <a href="#koleksiyon-alani" id="nav-collections">Koleksiyonlar</a>
+        <a href="#products">Ürün Sayısı: <span id="product-count">0</span></a>
+
+        <button class="cart-nav-btn" onclick="toggleCart()">
+            🛒 Sepetim <span class="cart-count-badge" id="global-cart-count">0</span>
+        </button>
     </div>
 </header>
+
+<div id="sayfa-ustu"></div>
 
 <section class="hero">
     <div class="hero-content">
         <h1>Zarafetin Detaylarda Gizli Hali</h1>
         <p>Shopify esintili el yapımı özel takı ve mutluluk dağıtan hediye koleksiyonumuzu keşfedin.</p>
-        <a href="#products" class="btn">Koleksiyonu İncele</a>
+        <a href="#koleksiyon-alani" class="btn">Koleksiyonu İncele</a>
     </div>
 </section>
 
 <main id="products">
-    <h2>Öne Çıkan Ürünler</h2>
+
+    <div id="koleksiyon-alani">
+        <h2>Koleksiyonlarımız</h2>
+        <div class="filter-container">
+            <button class="filter-btn active" onclick="filterProducts('hepsi', this)">✨ Tüm Ürünler</button>
+            <button class="filter-btn" onclick="filterProducts('Kadın', this)">👩 Kadın</button>
+            <button class="filter-btn" onclick="filterProducts('Erkek', this)">👨 Erkek</button>
+            <button class="filter-btn" onclick="filterProducts('Gümüş', this)">🥈 Gümüş</button>
+            <button class="filter-btn" onclick="filterProducts('Altın', this)">🥇 Altın</button>
+            <button class="filter-btn" onclick="filterProducts('Bronz', this)">🥉 Bronz/Broş</button>
+        </div>
+    </div>
 
     <div id="loading" style="text-align: center; font-size: 18px; color: #777;">
         Veritabanından ürünler yükleniyor...
     </div>
 
-    <div class="product-grid" id="dynamic-product-grid">
-    </div>
+    <div class="product-grid" id="dynamic-product-grid"></div>
 </main>
+
+<div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+        <h3>Alışveriş Sepetiniz</h3>
+        <button class="close-cart" onclick="toggleCart()">✕</button>
+    </div>
+
+    <div class="cart-items-container" id="cartItemsList">
+        <p style="text-align: center; color: #8e8e93; margin-top: 40px;">Sepetiniz şu an boş.</p>
+    </div>
+
+    <div class="cart-footer">
+        <div class="summary-row">
+            <span>Ara Toplam:</span>
+            <span id="cart-subtotal">0,00 TL</span>
+        </div>
+        <div class="summary-row">
+            <span>Kargo Ücreti:</span>
+            <span id="cart-shipping">0,00 TL</span>
+        </div>
+        <div class="summary-row" style="font-size: 12px; color: #2e7d32;" id="shipping-info">
+            * 1500 TL üzeri kargo bedava!
+        </div>
+        <div class="summary-row total">
+            <span>Genel Toplam:</span>
+            <span id="cart-total">0,00 TL</span>
+        </div>
+        <button class="checkout-btn" onclick="alert('Ödeme sayfasına yönlendiriliyorsunuz...')">Alışverişi Tamamla</button>
+    </div>
+</div>
 
 <footer>
     <p>&copy; 2026 Taşcı Hediyelik ve Mutluluk. Tüm Hakları Saklıdır. | Spring Boot & Security Final Projesi</p>
 </footer>
 
 <script>
+    let tumUrunler = [];
+    let sepet = [];
+
+    const resimHavuzu = [
+        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=500',
+        'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=500',
+        'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=500',
+        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=500',
+        'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=500',
+        'https://images.unsplash.com/photo-1543294001-f7cbfe92237e?q=80&w=500',
+        'https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=500',
+        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=500',
+        'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=500',
+        'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=500',
+        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=500',
+        'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?q=80&w=500',
+        'https://images.unsplash.com/photo-1533055640609-24b498dfd74c?q=80&w=500',
+        'https://images.unsplash.com/photo-1589674781759-c21c37956a44?q=80&w=500',
+        'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500'
+    ];
+
     document.addEventListener("DOMContentLoaded", function() {
-        // Spring Boot listeleme endpoint'i
         const apiUrl = 'http://localhost:8080/gifts';
 
-        // 15 ürünün her biri için Unsplash'ten seçilmiş tamamen benzersiz takı ve aksesuar havuzu
-        const resimHavuzu = [
-            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=500', // 1. Altın Zincir Kolye (İnci)
-            'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=500', // 2. Çelik Halka Küpe
-            'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=500', // 3. Doğal Taş Erkek Bileklik
-            'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=500', // 4. Gümüş Baget Yüzük
-            'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=500', // 5. Deri Örgü Bileklik
-            'https://www.artuklutelkari.com/wp-content/uploads/2019/09/gumus-islemeli-halhal-telkari.jpg', // 6. Minimalist Gümüş Halhal
-            'https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=500', // 7. Zirkon Taşlı Broş
-            'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=500', // 8. Çelik Erkek Kolye Ucu
-            'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=500', // 9. Safir Taşlı Minimal Yüzük
-            'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=500', // 10. Rose Gold Zincir Bileklik
-            'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=500', // 11. Etnik Gümüş Küpe Seti
-            'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?q=80&w=500', // 12. Kaplan Gözü Erkek Kolye
-            'https://images.unsplash.com/photo-1533055640609-24b498dfd74c?q=80&w=500', // 13. Zümrüt Yeşili Baget Kolye
-            'https://images.unsplash.com/photo-1589674781759-c21c37956a44?q=80&w=500', // 14. Mat Siyah Çelik Erkek Yüzük
-            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500'  // 15. Premium Hediye Saat Kutusu
-        ];
-
         fetch(apiUrl)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Veriler getirilemedi, yetki hatası olabilir.');
-                }
-                return response.json();
-            })
+            .then(response => response.json())
             .then(products => {
-                const grid = document.getElementById('dynamic-product-grid');
+                tumUrunler = products;
                 document.getElementById('loading').style.display = 'none';
-                document.getElementById('product-count').innerText = products.length;
-
-                if(products.length === 0) {
-                    grid.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Veritabanı şu an boş.</p>";
-                    return;
-                }
-
-                // Her bir ürünü sırasına göre havuzdaki benzersiz görselle eşleştiriyoruz
-                grid.innerHTML = products.map((product, index) => {
-                    // Eğer ürün sayısı havuzdan fazlaysa başa sarsın diye mod (%) kullanıyoruz
-                    const finalImage = resimHavuzu[index % resimHavuzu.length];
-
-                    return `
-                        <div class="product-card">
-                            <div class="product-image">
-                                <img src="${finalImage}" alt="${product.name}" style="width:100%; height:250px; object-fit:cover;">
-                            </div>
-                            <div class="product-info">
-                                <h3>${product.name}</h3>
-                                <p class="description">${product.description || 'Özel Tasarım Butik Ürünü'}</p>
-                                <p class="price">${product.price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</p>
-                                <span class="tag">${product.customerGroup || 'Genel'}</span>
-                                <span class="tag" style="background-color: #e8f5e9; color: #2e7d32;">${product.supplierName || 'Taşcı Gift'}</span>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
+                displayProducts(tumUrunler);
             })
             .catch(error => {
                 console.error('Hata:', error);
-                document.getElementById('loading').innerText = "Ürünler yüklenirken bir hata oluştu. Security ayarlarını veya endpoint adresini kontrol edin.";
+                document.getElementById('loading').innerText = "Ürünler yüklenirken hata oluştu.";
             });
+
+        // Yönlendirmeler
+        document.getElementById('nav-home').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            const allBtn = document.querySelector(".filter-container button");
+            if(allBtn) allBtn.classList.add('active');
+            displayProducts(tumUrunler);
+            document.getElementById('sayfa-ustu').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('nav-collections').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('koleksiyon-alani').scrollIntoView({ behavior: 'smooth' });
+        });
     });
+
+    function getProductImage(product) {
+        if (product.name.toLowerCase().includes('gümüş halhal') || product.name.toLowerCase().includes('halhal')) {
+            return 'https://www.artuklutelkari.com/wp-content/uploads/2019/09/gumus-islemeli-halhal-telkari.jpg';
+        }
+        const imageIndex = (product.id - 1) % resimHavuzu.length;
+        return resimHavuzu[imageIndex >= 0 ? imageIndex : 0];
+    }
+
+    function displayProducts(productsToRender) {
+        const grid = document.getElementById('dynamic-product-grid');
+        document.getElementById('product-count').innerText = productsToRender.length;
+
+        if(productsToRender.length === 0) {
+            grid.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Ürün bulunamadı.</p>";
+            return;
+        }
+
+        grid.innerHTML = productsToRender.map((product) => {
+            const finalImage = getProductImage(product);
+
+            return `
+                <div class="product-card">
+                    <div class="product-image">
+                        <img src="${finalImage}" alt="${product.name}" style="width:100%; height:250px; object-fit:cover;">
+                    </div>
+                    <div class="product-info">
+                        <h3>${product.name}</h3>
+                        <p class="description">${product.description}</p>
+                        <p class="price">${product.price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</p>
+                        <span class="tag">${product.customerGroup}</span>
+                        <span class="tag" style="background-color: #e8f5e9; color: #2e7d32;">${product.supplierName}</span>
+                        <button class="add-to-cart-btn" onclick="addToCart(${product.id})">🛒 Sepete Ekle</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleCart() {
+        const drawer = document.getElementById('cartDrawer');
+        drawer.classList.toggle('open');
+    }
+
+    function addToCart(productId) {
+        const product = tumUrunler.find(p => p.id === productId);
+        if (!product) return;
+
+        const existingItem = sepet.find(item => item.id === productId);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            sepet.push({ ...product, quantity: 1 });
+        }
+
+        updateCartUI();
+        document.getElementById('cartDrawer').classList.add('open');
+    }
+
+    function updateQuantity(productId, amount) {
+        const item = sepet.find(item => item.id === productId);
+        if (!item) return;
+
+        item.quantity += amount;
+        if (item.quantity <= 0) {
+            removeFromCart(productId);
+            return;
+        }
+        updateCartUI();
+    }
+
+    function removeFromCart(productId) {
+        sepet = sepet.filter(item => item.id !== productId);
+        updateCartUI();
+    }
+
+    function updateCartUI() {
+        const listContainer = document.getElementById('cartItemsList');
+        const globalBadge = document.getElementById('global-cart-count');
+
+        const totalItems = sepet.reduce((sum, item) => sum + item.quantity, 0);
+        globalBadge.innerText = totalItems;
+
+        if (sepet.length === 0) {
+            listContainer.innerHTML = `<p style="text-align: center; color: #8e8e93; margin-top: 40px;">Sepetiniz şu an boş.</p>`;
+            document.getElementById('cart-subtotal').innerText = '0,00 TL';
+            document.getElementById('cart-shipping').innerText = '0,00 TL';
+            document.getElementById('cart-total').innerText = '0,00 TL';
+            return;
+        }
+
+        listContainer.innerHTML = sepet.map(item => {
+            const img = getProductImage(item);
+            return `
+                <div class="cart-item">
+                    <img src="${img}" alt="${item.name}">
+                    <div class="cart-item-details">
+                        <h4>${item.name}</h4>
+                        <div class="cart-item-price">${(item.price * item.quantity).toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</div>
+                        <div class="quantity-controls">
+                            <button onclick="updateQuantity(${item.id}, -1)">-</button>
+                            <span>${item.quantity}</span>
+                            <button onclick="updateQuantity(${item.id}, 1)">+</button>
+                            <button class="remove-item" onclick="removeFromCart(${item.id})" style="margin-left:auto;">Sil</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        const subtotal = sepet.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        const shippingFee = subtotal >= 1500 ? 0 : 75;
+        const total = subtotal + shippingFee;
+
+        document.getElementById('cart-subtotal').innerText = subtotal.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' TL';
+        document.getElementById('cart-shipping').innerText = shippingFee === 0 ? 'Bedava' : shippingFee.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' TL';
+        document.getElementById('cart-total').innerText = total.toLocaleString('tr-TR', { minimumFractionDigits: 2 }) + ' TL';
+    }
+
+    function filterProducts(kategori, buttonElement) {
+        document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+        buttonElement.classList.add('active');
+
+        let filtrelenmişListe = [];
+
+        if (kategori === 'hepsi') {
+            filtrelenmişListe = tumUrunler;
+        } else if (kategori === 'Kadın' || kategori === 'Erkek') {
+            filtrelenmişListe = tumUrunler.filter(p => p.customerGroup === kategori);
+        } else {
+            let searchKey = kategori.toLowerCase();
+            if(searchKey === 'bronz') {
+                filtrelenmişListe = tumUrunler.filter(p => p.name.toLowerCase().includes('broş') || p.name.toLowerCase().includes('bronz'));
+            } else {
+                filtrelenmişListe = tumUrunler.filter(p => p.name.toLowerCase().includes(searchKey));
+            }
+        }
+
+        displayProducts(filtrelenmişListe);
+    }
 </script>
 </body>
 </html>

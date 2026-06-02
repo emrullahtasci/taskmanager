@@ -1,103 +1,71 @@
 package com.example.taskmanager.controller;
 
-import jakarta.validation.Valid;
-import com.example.taskmanager.dto.GiftItemRequest;
 import com.example.taskmanager.entity.GiftItem;
+import com.example.taskmanager.dto.GiftItemRequest;
 import com.example.taskmanager.service.GiftItemService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
-@RequestMapping("/tasks")
-public class TaskController {
+@RequestMapping("/gifts")
+public class GiftItemController {
 
-    private final GiftItemService taskService;
+    private final GiftItemService giftItemService;
 
-    public TaskController(GiftItemService taskService) {
-        this.taskService = taskService;
+    @Autowired
+    public GiftItemController(GiftItemService giftItemService) {
+        this.giftItemService = giftItemService;
     }
 
     @GetMapping
-    public List<GiftItem> getAllTasks() {
-        return taskService.getAllTasks();
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<GiftItem> getAllGifts() {
+        return giftItemService.getAllGifts();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<GiftItem> getTaskById(@PathVariable Long id) {
-        return taskService.getTaskById(id)
-                .map(task -> ResponseEntity.ok(task))
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public ResponseEntity<GiftItem> getGiftById(@PathVariable Long id) {
+        return giftItemService.getGiftById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<GiftItem> createTask(@Valid @RequestBody GiftItemRequest taskRequest) {
-        GiftItem createdTask = taskService.createTask(taskRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<GiftItem> createGift(@Valid @RequestBody GiftItemRequest request) {
+        GiftItem createdGift = giftItemService.createGift(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdGift);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<GiftItem> updateTask(
-            @PathVariable Long id,
-            @Valid @RequestBody GiftItemRequest taskRequest
-    ) {
-        GiftItem updatedTask = taskService.updateTask(id, taskRequest);
-
-        if (updatedTask != null) {
-            return ResponseEntity.ok(updatedTask);
-        }
-
-        return ResponseEntity.notFound().build();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<GiftItem> updateGift(@PathVariable Long id, @Valid @RequestBody GiftItemRequest request) {
+        return giftItemService.updateGift(id, request)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteTask(@PathVariable Long id) {
-        boolean deleted = taskService.deleteTask(id);
-
-        if (deleted) {
-            return ResponseEntity.ok("Görev silindi.");
-        }
-
-        return ResponseEntity.notFound().build();
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> deleteGift(@PathVariable Long id) {
+        return giftItemService.deleteGift(id) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
-    @GetMapping("/completed/{completed}")
-    public List<GiftItem> getTasksByCompletedStatus(@PathVariable boolean completed) {
-        return taskService.getTasksByCompletedStatus(completed);
+    @GetMapping("/filter-price")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<GiftItem> filterByPrice(@RequestParam double price) {
+        return giftItemService.getFilterByPrice(price);
     }
 
-    @GetMapping("/search")
-    public List<GiftItem> searchTasksByTitle(@RequestParam String title) {
-        return taskService.searchTasksByTitle(title);
+    @GetMapping("/customer-group/{group}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    public List<GiftItem> filterByGroup(@PathVariable String group) {
+        return giftItemService.getByCustomerGroup(group);
     }
-
-    @GetMapping("/filter")
-    public List<GiftItem> filterTasks(
-            @RequestParam String title,
-            @RequestParam boolean completed
-    ) {
-        return taskService.filterTasksByTitleAndCompleted(title, completed);
-    }
-
-    @GetMapping("/count")
-    public long countTasksByCompletedStatus(@RequestParam boolean completed) {
-        return taskService.countTasksByCompletedStatus(completed);
-    }
-
-    @GetMapping("/exists")
-    public boolean existsTaskByTitle(@RequestParam String title) {
-        return taskService.existsTaskByTitle(title);
-    }
-
-    @GetMapping("/latest")
-    public List<GiftItem> getLatestFiveTasks() {
-        return taskService.getLatestFiveTasks();
-    }
-
-    @PostMapping("/rollback-test")
-    public ResponseEntity<GiftItem> createTaskWithRollbackTest(@Valid @RequestBody GiftItemRequest taskRequest) {
-        GiftItem createdTask = taskService.createTaskWithRollbackTest(taskRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);}
 }

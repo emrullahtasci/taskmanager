@@ -1,8 +1,8 @@
 package com.example.taskmanager.service;
 
-import com.example.taskmanager.dto.TaskRequest;
-import com.example.taskmanager.entity.Task;
-import com.example.taskmanager.repository.TaskRepository;
+import com.example.taskmanager.dto.GiftItemRequest;
+import com.example.taskmanager.entity.GiftItem;
+import com.example.taskmanager.repository.GıftItemRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,23 +14,23 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class TaskService {
 
-    private final TaskRepository taskRepository;
+    private final GıftItemRepository taskRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    public TaskService(GıftItemRepository taskRepository) {
         this.taskRepository = taskRepository;
     }
 
-    public List<Task> getAllTasks() {
+    public List<GiftItem> getAllTasks() {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> getTaskById(Long id) {
+    public Optional<GiftItem> getTaskById(Long id) {
         return taskRepository.findById(id);
     }
 
     @Transactional
-    public Task createTask(TaskRequest taskRequest) {
-        Task task = new Task();
+    public GiftItem createTask(GiftItemRequest taskRequest) {
+        GiftItem task = new GiftItem();
 
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
@@ -45,11 +45,11 @@ public class TaskService {
     }
 
     @Transactional
-    public Task updateTask(Long id, TaskRequest taskRequest) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+    public GiftItem updateTask(Long id, GiftItemRequest taskRequest) {
+        Optional<GiftItem> optionalTask = taskRepository.findById(id);
 
         if (optionalTask.isPresent()) {
-            Task existingTask = optionalTask.get();
+            GiftItem existingTask = optionalTask.get();
 
             existingTask.setTitle(taskRequest.getTitle());
             existingTask.setDescription(taskRequest.getDescription());
@@ -66,7 +66,7 @@ public class TaskService {
 
     @Transactional
     public boolean deleteTask(Long id) {
-        Optional<Task> optionalTask = taskRepository.findById(id);
+        Optional<GiftItem> optionalTask = taskRepository.findById(id);
 
         if (optionalTask.isPresent()) {
             taskRepository.deleteById(id);
@@ -76,15 +76,15 @@ public class TaskService {
         return false;
     }
 
-    public List<Task> getTasksByCompletedStatus(boolean completed) {
+    public List<GiftItem> getTasksByCompletedStatus(boolean completed) {
         return taskRepository.findByCompleted(completed);
     }
 
-    public List<Task> searchTasksByTitle(String title) {
+    public List<GiftItem> searchTasksByTitle(String title) {
         return taskRepository.findByTitleContainingIgnoreCase(title);
     }
 
-    public List<Task> filterTasksByTitleAndCompleted(String title, boolean completed) {
+    public List<GiftItem> filterTasksByTitleAndCompleted(String title, boolean completed) {
         return taskRepository.findByTitleContainingIgnoreCaseAndCompleted(title, completed);
     }
 
@@ -96,13 +96,13 @@ public class TaskService {
         return taskRepository.existsByTitleIgnoreCase(title);
     }
 
-    public List<Task> getLatestFiveTasks() {
+    public List<GiftItem> getLatestFiveTasks() {
         return taskRepository.findTop5ByOrderByIdDesc();
     }
 
     @Transactional
-    public Task createTaskWithRollbackTest(TaskRequest taskRequest) {
-        Task task = new Task();
+    public GiftItem createTaskWithRollbackTest(GiftItemRequest taskRequest) {
+        GiftItem task = new GiftItem();
 
         task.setTitle(taskRequest.getTitle());
         task.setDescription(taskRequest.getDescription());
@@ -113,7 +113,7 @@ public class TaskService {
             task.setCompleted(false);
         }
 
-        Task savedTask = taskRepository.save(task);
+        GiftItem savedTask = taskRepository.save(task);
 
         if (true) {
             throw new RuntimeException("Rollback testi için bilinçli hata oluşturuldu.");

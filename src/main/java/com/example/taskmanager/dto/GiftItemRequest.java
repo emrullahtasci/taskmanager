@@ -2,7 +2,7 @@ package com.example.taskmanager.dto;
 
 import jakarta.validation.constraints.NotBlank;
 
-public class TaskRequest {
+public class GiftItemRequest {
 
     @NotBlank(message = "Title cannot be blank")
     private String title;
@@ -10,10 +10,10 @@ public class TaskRequest {
     private String description;
     private Boolean completed;
 
-    public TaskRequest() {
+    public GiftItemRequest() {
     }
 
-    public TaskRequest(String title, String description, Boolean completed) {
+    public GiftItemRequest(String title, String description, Boolean completed) {
         this.title = title;
         this.description = description;
         this.completed = completed;

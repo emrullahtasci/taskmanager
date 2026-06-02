@@ -1,9 +1,9 @@
 package com.example.taskmanager.controller;
 
 import jakarta.validation.Valid;
-import com.example.taskmanager.dto.TaskRequest;
-import com.example.taskmanager.entity.Task;
-import com.example.taskmanager.service.TaskService;
+import com.example.taskmanager.dto.GiftItemRequest;
+import com.example.taskmanager.entity.GiftItem;
+import com.example.taskmanager.service.GiftItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,36 +14,36 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TaskController {
 
-    private final TaskService taskService;
+    private final GiftItemService taskService;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(GiftItemService taskService) {
         this.taskService = taskService;
     }
 
     @GetMapping
-    public List<Task> getAllTasks() {
+    public List<GiftItem> getAllTasks() {
         return taskService.getAllTasks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+    public ResponseEntity<GiftItem> getTaskById(@PathVariable Long id) {
         return taskService.getTaskById(id)
                 .map(task -> ResponseEntity.ok(task))
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Task> createTask(@Valid @RequestBody TaskRequest taskRequest) {
-        Task createdTask = taskService.createTask(taskRequest);
+    public ResponseEntity<GiftItem> createTask(@Valid @RequestBody GiftItemRequest taskRequest) {
+        GiftItem createdTask = taskService.createTask(taskRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Task> updateTask(
+    public ResponseEntity<GiftItem> updateTask(
             @PathVariable Long id,
-            @Valid @RequestBody TaskRequest taskRequest
+            @Valid @RequestBody GiftItemRequest taskRequest
     ) {
-        Task updatedTask = taskService.updateTask(id, taskRequest);
+        GiftItem updatedTask = taskService.updateTask(id, taskRequest);
 
         if (updatedTask != null) {
             return ResponseEntity.ok(updatedTask);
@@ -64,17 +64,17 @@ public class TaskController {
     }
 
     @GetMapping("/completed/{completed}")
-    public List<Task> getTasksByCompletedStatus(@PathVariable boolean completed) {
+    public List<GiftItem> getTasksByCompletedStatus(@PathVariable boolean completed) {
         return taskService.getTasksByCompletedStatus(completed);
     }
 
     @GetMapping("/search")
-    public List<Task> searchTasksByTitle(@RequestParam String title) {
+    public List<GiftItem> searchTasksByTitle(@RequestParam String title) {
         return taskService.searchTasksByTitle(title);
     }
 
     @GetMapping("/filter")
-    public List<Task> filterTasks(
+    public List<GiftItem> filterTasks(
             @RequestParam String title,
             @RequestParam boolean completed
     ) {
@@ -92,12 +92,12 @@ public class TaskController {
     }
 
     @GetMapping("/latest")
-    public List<Task> getLatestFiveTasks() {
+    public List<GiftItem> getLatestFiveTasks() {
         return taskService.getLatestFiveTasks();
     }
 
     @PostMapping("/rollback-test")
-    public ResponseEntity<Task> createTaskWithRollbackTest(@Valid @RequestBody TaskRequest taskRequest) {
-        Task createdTask = taskService.createTaskWithRollbackTest(taskRequest);
+    public ResponseEntity<GiftItem> createTaskWithRollbackTest(@Valid @RequestBody GiftItemRequest taskRequest) {
+        GiftItem createdTask = taskService.createTaskWithRollbackTest(taskRequest);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdTask);}
 }

@@ -1,0 +1,15 @@
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Altın Zincir Kolye', '14 Ayar Minimal Tasarım', 1500.00, true, 'Kadın', 'Taşcı Sarraf');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Çelik Halka Küpe', 'Paslanmaz Çelik, Antialerjik', 450.00, true, 'Kadın', 'Atasay Lojistik');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Doğal Taş Erkek Bileklik', 'Mat Oniks ve Lav Taşı', 350.00, true, 'Erkek', 'Korkut Toptan');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Gümüş Baget Yüzük', '925 Ayar Saf Gümüş Zirkon Taşlı', 850.00, true, 'Kadın', 'Taşcı Sarraf');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Deri Örgü Bileklik', 'Manyetik Klipsli Gerçek Deri', 290.00, true, 'Erkek', 'Moda Aksesuar');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Minimalist Gümüş Halhal', 'Yaz Sezonuna Özel İnce Tasarım', 380.00, true, 'Kadın', 'Atasay Lojistik');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Zirkon Taşlı Broş', 'Ceket ve Elbiseler İçin Premium Tasarım', 620.00, true, 'Kadın', 'Korkut Toptan');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Çelik Erkek Kolye Ucu', 'Kutup Yıldızı Figürlü Zincirli', 410.00, true, 'Erkek', 'Moda Aksesuar');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Safir Taşlı Minimal Yüzük', 'İnce İşçilikli Safir Taşlı Gümüş Tasarım', 950.00, true, 'Kadın', 'Taşcı Sarraf');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Rose Gold Zincir Bileklik', 'Ayarlanabilir Klipsli Zarif Kadın Bilekliği', 720.00, true, 'Kadın', 'Atasay Lojistik');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Etnik Gümüş Küpe Seti', '3lü Kombin Halinde Otantik Tasarım Küpe', 490.00, true, 'Kadın', 'Korkut Toptan');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Kaplan Gözü Erkek Kolye', 'Enerji Dengeleyici Gerçek Doğal Taşlı Kolye', 680.00, true, 'Erkek', 'Moda Aksesuar');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Zümrüt Yeşili Baget Kolye', 'Özel Davetler İçin Parıltılı Taşlı Kolye', 1850.00, true, 'Kadın', 'Taşcı Sarraf');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Mat Siyah Çelik Erkek Yüzük', 'Çizilmez ve Paslanmaz Modern Erkek Yüzüğü', 320.00, true, 'Erkek', 'Moda Aksesuar');
+INSERT INTO gift_items (name, description, price, in_stock, customer_group, supplier_name) VALUES ('Premium Hediye Saat Kutusu', 'Gümüş Bileklik ve Deri Cüzdan Kombin Set', 1990.00, true, 'Genel', 'Korkut Toptan');

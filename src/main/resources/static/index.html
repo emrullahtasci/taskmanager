@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taşcı Hediyelik ve Mutluluk | Butik Tasarım & Hediye</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo">Taşcı Hediyelik ve Mutluluk</div>
+    <nav>
+        <a href="#">Anasayfa</a>
+        <a href="#">Koleksiyonlar</a>
+        <a href="#">Ürün Sayısı: <span id="product-count">0</span></a>
+    </nav>
+    <div class="auth-status">
+        <span class="badge">Güvenli Bağlantı (RBAC Active)</span>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Zarafetin Detaylarda Gizli Hali</h1>
+        <p>Shopify esintili el yapımı özel takı ve mutluluk dağıtan hediye koleksiyonumuzu keşfedin.</p>
+        <a href="#products" class="btn">Koleksiyonu İncele</a>
+    </div>
+</section>
+
+<main id="products">
+    <h2>Öne Çıkan Ürünler</h2>
+
+    <div id="loading" style="text-align: center; font-size: 18px; color: #777;">
+        Veritabanından ürünler yükleniyor...
+    </div>
+
+    <div class="product-grid" id="dynamic-product-grid">
+    </div>
+</main>
+
+<footer>
+    <p>&copy; 2026 Taşcı Hediyelik ve Mutluluk. Tüm Hakları Saklıdır. | Spring Boot & Security Final Projesi</p>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Spring Boot listeleme endpoint'i
+        const apiUrl = 'http://localhost:8080/gifts';
+
+        // 15 ürünün her biri için Unsplash'ten seçilmiş tamamen benzersiz takı ve aksesuar havuzu
+        const resimHavuzu = [
+            'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=500', // 1. Altın Zincir Kolye (İnci)
+            'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?q=80&w=500', // 2. Çelik Halka Küpe
+            'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?q=80&w=500', // 3. Doğal Taş Erkek Bileklik
+            'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=500', // 4. Gümüş Baget Yüzük
+            'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?q=80&w=500', // 5. Deri Örgü Bileklik
+            'https://www.artuklutelkari.com/wp-content/uploads/2019/09/gumus-islemeli-halhal-telkari.jpg', // 6. Minimalist Gümüş Halhal
+            'https://images.unsplash.com/photo-1635767798638-3e25273a8236?q=80&w=500', // 7. Zirkon Taşlı Broş
+            'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=500', // 8. Çelik Erkek Kolye Ucu
+            'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?q=80&w=500', // 9. Safir Taşlı Minimal Yüzük
+            'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?q=80&w=500', // 10. Rose Gold Zincir Bileklik
+            'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=500', // 11. Etnik Gümüş Küpe Seti
+            'https://images.unsplash.com/photo-1506630448388-4e683c67ddb0?q=80&w=500', // 12. Kaplan Gözü Erkek Kolye
+            'https://images.unsplash.com/photo-1533055640609-24b498dfd74c?q=80&w=500', // 13. Zümrüt Yeşili Baget Kolye
+            'https://images.unsplash.com/photo-1589674781759-c21c37956a44?q=80&w=500', // 14. Mat Siyah Çelik Erkek Yüzük
+            'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=500'  // 15. Premium Hediye Saat Kutusu
+        ];
+
+        fetch(apiUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Veriler getirilemedi, yetki hatası olabilir.');
+                }
+                return response.json();
+            })
+            .then(products => {
+                const grid = document.getElementById('dynamic-product-grid');
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('product-count').innerText = products.length;
+
+                if(products.length === 0) {
+                    grid.innerHTML = "<p style='text-align:center; grid-column: 1/-1;'>Veritabanı şu an boş.</p>";
+                    return;
+                }
+
+                // Her bir ürünü sırasına göre havuzdaki benzersiz görselle eşleştiriyoruz
+                grid.innerHTML = products.map((product, index) => {
+                    // Eğer ürün sayısı havuzdan fazlaysa başa sarsın diye mod (%) kullanıyoruz
+                    const finalImage = resimHavuzu[index % resimHavuzu.length];
+
+                    return `
+                        <div class="product-card">
+                            <div class="product-image">
+                                <img src="${finalImage}" alt="${product.name}" style="width:100%; height:250px; object-fit:cover;">
+                            </div>
+                            <div class="product-info">
+                                <h3>${product.name}</h3>
+                                <p class="description">${product.description || 'Özel Tasarım Butik Ürünü'}</p>
+                                <p class="price">${product.price.toLocaleString('tr-TR', { minimumFractionDigits: 2 })} TL</p>
+                                <span class="tag">${product.customerGroup || 'Genel'}</span>
+                                <span class="tag" style="background-color: #e8f5e9; color: #2e7d32;">${product.supplierName || 'Taşcı Gift'}</span>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            })
+            .catch(error => {
+                console.error('Hata:', error);
+                document.getElementById('loading').innerText = "Ürünler yüklenirken bir hata oluştu. Security ayarlarını veya endpoint adresini kontrol edin.";
+            });
+    });
+</script>
+</body>
+</html>

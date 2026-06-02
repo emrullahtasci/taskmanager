@@ -1,124 +1,71 @@
 package com.example.taskmanager.service;
 
-import com.example.taskmanager.dto.GiftItemRequest;
 import com.example.taskmanager.entity.GiftItem;
-import com.example.taskmanager.repository.GıftItemRepository;
+import com.example.taskmanager.dto.GiftItemRequest;
+import com.example.taskmanager.repository.GiftItemRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
-@Transactional(readOnly = true)
-public class TaskService {
+public class GiftItemService {
 
-    private final GıftItemRepository taskRepository;
+    private final GiftItemRepository giftItemRepository;
 
-    public TaskService(GıftItemRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    @Autowired
+    public GiftItemService(GiftItemRepository giftItemRepository) {
+        this.giftItemRepository = giftItemRepository;
     }
 
-    public List<GiftItem> getAllTasks() {
-        return taskRepository.findAll();
+    public List<GiftItem> getAllGifts() {
+        return giftItemRepository.findAll();
     }
 
-    public Optional<GiftItem> getTaskById(Long id) {
-        return taskRepository.findById(id);
+    public Optional<GiftItem> getGiftById(Long id) {
+        return giftItemRepository.findById(id);
     }
 
-    @Transactional
-    public GiftItem createTask(GiftItemRequest taskRequest) {
-        GiftItem task = new GiftItem();
-
-        task.setTitle(taskRequest.getTitle());
-        task.setDescription(taskRequest.getDescription());
-
-        if (taskRequest.getCompleted() != null) {
-            task.setCompleted(taskRequest.getCompleted());
-        } else {
-            task.setCompleted(false);
-        }
-
-        return taskRepository.save(task);
+    @Transactional(rollbackFor = Exception.class)
+    public GiftItem createGift(GiftItemRequest request) {
+        GiftItem gift = new GiftItem();
+        gift.setName(request.getName());
+        gift.setDescription(request.getDescription());
+        gift.setPrice(request.getPrice());
+        gift.setSupplierName(request.getSupplierName());
+        gift.setCustomerGroup(request.getCustomerGroup());
+        gift.setInStock(request.isInStock());
+        return giftItemRepository.save(gift);
     }
 
-    @Transactional
-    public GiftItem updateTask(Long id, GiftItemRequest taskRequest) {
-        Optional<GiftItem> optionalTask = taskRepository.findById(id);
-
-        if (optionalTask.isPresent()) {
-            GiftItem existingTask = optionalTask.get();
-
-            existingTask.setTitle(taskRequest.getTitle());
-            existingTask.setDescription(taskRequest.getDescription());
-
-            if (taskRequest.getCompleted() != null) {
-                existingTask.setCompleted(taskRequest.getCompleted());
-            }
-
-            return taskRepository.save(existingTask);
-        }
-
-        return null;
+    @Transactional(rollbackFor = Exception.class)
+    public Optional<GiftItem> updateGift(Long id, GiftItemRequest request) {
+        return giftItemRepository.findById(id).map(existingGift -> {
+            existingGift.setName(request.getName());
+            existingGift.setDescription(request.getDescription());
+            existingGift.setPrice(request.getPrice());
+            existingGift.setSupplierName(request.getSupplierName());
+            existingGift.setCustomerGroup(request.getCustomerGroup());
+            existingGift.setInStock(request.isInStock());
+            return giftItemRepository.save(existingGift);
+        });
     }
 
-    @Transactional
-    public boolean deleteTask(Long id) {
-        Optional<GiftItem> optionalTask = taskRepository.findById(id);
-
-        if (optionalTask.isPresent()) {
-            taskRepository.deleteById(id);
+    @Transactional(rollbackFor = Exception.class)
+    public boolean deleteGift(Long id) {
+        if (giftItemRepository.existsById(id)) {
+            giftItemRepository.deleteById(id);
             return true;
         }
-
         return false;
     }
 
-    public List<GiftItem> getTasksByCompletedStatus(boolean completed) {
-        return taskRepository.findByCompleted(completed);
+    public List<GiftItem> getFilterByPrice(double price) {
+        return giftItemRepository.findByPriceLessThanEqual(price);
     }
 
-    public List<GiftItem> searchTasksByTitle(String title) {
-        return taskRepository.findByTitleContainingIgnoreCase(title);
-    }
-
-    public List<GiftItem> filterTasksByTitleAndCompleted(String title, boolean completed) {
-        return taskRepository.findByTitleContainingIgnoreCaseAndCompleted(title, completed);
-    }
-
-    public long countTasksByCompletedStatus(boolean completed) {
-        return taskRepository.countByCompleted(completed);
-    }
-
-    public boolean existsTaskByTitle(String title) {
-        return taskRepository.existsByTitleIgnoreCase(title);
-    }
-
-    public List<GiftItem> getLatestFiveTasks() {
-        return taskRepository.findTop5ByOrderByIdDesc();
-    }
-
-    @Transactional
-    public GiftItem createTaskWithRollbackTest(GiftItemRequest taskRequest) {
-        GiftItem task = new GiftItem();
-
-        task.setTitle(taskRequest.getTitle());
-        task.setDescription(taskRequest.getDescription());
-
-        if (taskRequest.getCompleted() != null) {
-            task.setCompleted(taskRequest.getCompleted());
-        } else {
-            task.setCompleted(false);
-        }
-
-        GiftItem savedTask = taskRepository.save(task);
-
-        if (true) {
-            throw new RuntimeException("Rollback testi için bilinçli hata oluşturuldu.");
-        }
-
-        return savedTask;
+    public List<GiftItem> getByCustomerGroup(String group) {
+        return giftItemRepository.findByCustomerGroupIgnoreCase(group);
     }
 }

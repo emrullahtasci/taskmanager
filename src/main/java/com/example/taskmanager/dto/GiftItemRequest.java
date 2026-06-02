@@ -1,45 +1,29 @@
 package com.example.taskmanager.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 public class GiftItemRequest {
 
-    @NotBlank(message = "Title cannot be blank")
-    private String title;
-
+    @NotBlank(message = "Urun adi bos olamaz")
+    private String name;
     private String description;
-    private Boolean completed;
+    @Positive(message = "Fiyat pozitif olmalidir")
+    private double price;
+    private String supplierName;
+    private String customerGroup;
+    private boolean inStock;
 
-    public GiftItemRequest() {
-    }
-
-    public GiftItemRequest(String title, String description, Boolean completed) {
-        this.title = title;
-        this.description = description;
-        this.completed = completed;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Boolean getCompleted() {
-        return completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public double getPrice() { return price; }
+    public void setPrice(double price) { this.price = price; }
+    public String getSupplierName() { return supplierName; }
+    public void setSupplierName(String supplierName) { this.supplierName = supplierName; }
+    public String getCustomerGroup() { return customerGroup; }
+    public void setCustomerGroup(String customerGroup) { this.customerGroup = customerGroup; }
+    public boolean isInStock() { return inStock; }
+    public void setInStock(boolean inStock) { this.inStock = inStock; }
 }

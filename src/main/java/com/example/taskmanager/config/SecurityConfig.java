@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**", "/").permitAll()
-                        // Sadece ADMIN POST yapabilsin diye kısıtlıyoruz:
+
                         .requestMatchers(HttpMethod.POST, "/gifts").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
